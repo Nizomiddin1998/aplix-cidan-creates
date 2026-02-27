@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Twitter, Linkedin, Github } from "lucide-react";
 import { ApixLogo } from "@/shared/components/ApixLogo";
 import { Button } from "@/shared/components/Button";
+import { MovingDashedBorder } from "@/shared/components/MovingDashedBorder";
+import { JoinCornerBacket } from "@/shared/components/JoinCornerBacket";
 
 const LINKS = [
   { label: "About", href: "/about" },
@@ -21,10 +23,14 @@ const SOCIALS = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/[0.07] pt-16 pb-8">
-      <div className="container-main">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
+    <footer className="container-main relative">
+      <MovingDashedBorder left={false} right={false} bottom={false} />
+      <div className="relative px-6">
+        <MovingDashedBorder top={false} />
+        <JoinCornerBacket />
+        <div className="section grid grid-cols-1 md:grid-cols-2 gap-16 ">
           {/* Left — Logo and Links */}
+
           <div className="flex flex-col gap-10">
             <ApixLogo size={22} />
             <div className="flex flex-wrap gap-6">
@@ -32,7 +38,7 @@ export function Footer() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-xs font-medium text-white/50 no-underline transition-colors duration-200 hover:text-white"
+                  className="text-base font-normal text-text-secondary no-underline transition-colors duration-200 leading-[1.4] hover:text-brand"
                 >
                   {link.label}
                 </Link>
@@ -41,23 +47,29 @@ export function Footer() {
           </div>
 
           {/* Right — Newsletter */}
-          <div className="max-w-[360px] md:ml-auto">
-            <p className="text-xs font-semibold text-white mb-3">
+          <div className="max-w-[360px] md:ml-auto flex flex-col gap-3">
+            <p className="text-base  leading-[1.2] text-white ">
               Join our newsletter
             </p>
-            <div className="flex gap-1">
-              <input
-                type="email"
-                placeholder="name@email.com"
-                className="flex-1 bg-white/[0.04] border border-white/10 rounded-sm px-3 py-2 text-white text-xs outline-none placeholder:text-white/30 focus:border-white/20 transition-colors"
-              />
-              <Button text="Thank you" rightIcon={false} />
+            <div className="flex gap-2 p-3 relative justify-between">
+              <MovingDashedBorder left={false} right={false} />
+              <JoinCornerBacket />
+              <div className="relative w-full">
+                <JoinCornerBacket color="rgba(255, 255, 255, 0.14)" />
+                <input
+                  type="email"
+                  placeholder="name@email.com"
+                  className="flex-1 bg-white/[0.04] border border-white/10 px-3 py-2 w-full text-white text-xs outline-none placeholder:text-white/30 placeholder:text-base focus:border-white/20 transition-colors"
+                />
+              </div>
+
+              <Button text="SUBSCRIBE" rightIcon={false} />
             </div>
-            <p className="text-[0.65rem] text-white/40 mt-2">
+            <p className="text-base text-text-secondary/50 font-[300] leading-[1.2]">
               By clicking, you&apos;re agreeing to our{" "}
               <Link
-                href="/terms"
-                className="text-inherit hover:text-white/60 transition-colors"
+                href="/#"
+                className="text-brand hover:text-text-secondary transition-colors"
               >
                 Terms
               </Link>
@@ -65,9 +77,13 @@ export function Footer() {
             </p>
           </div>
         </div>
+      </div>
 
-        {/* Bottom bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 border-t border-white/[0.06]">
+      {/* Bottom bar */}
+      <div className="relative px-6">
+        <MovingDashedBorder top={false} bottom={false} />
+        <JoinCornerBacket />
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-6 ">
           <div className="flex items-center gap-2 text-[0.75rem] text-white/40">
             <span>
               © 2026 Aplix by{" "}

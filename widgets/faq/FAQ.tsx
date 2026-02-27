@@ -43,7 +43,7 @@ export function FAQ() {
   return (
     <section className="section" id="faq" ref={ref}>
       <div className="container-main">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Left — title */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -61,20 +61,22 @@ export function FAQ() {
 
           {/* Right — accordion */}
           <div className="flex flex-col gap-20">
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-3">
               {FAQS.map((faq, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 10 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: i * 0.08, duration: 0.4 }}
-                  className="border-b border-white/[0.06]"
+                  className="relative bg-white/[0.06] p-4 flex flex-col gap-2"
                 >
+                  <JoinCornerBacket
+                    color={open === i ? "#f54900" : "rgba(255,255,255,0.1)"}
+                  />
+                  {open === i && <MovingDashedBorder />}
                   <button
                     onClick={() => setOpen(open === i ? null : i)}
-                    className={`w-full py-5 flex items-center justify-between bg-transparent border-none text-left cursor-pointer transition-colors duration-200 ${
-                      open === i ? "text-white" : "text-white/70"
-                    }`}
+                    className={`w-full  flex items-center justify-between bg-transparent border-none text-left cursor-pointer transition-colors duration-200 text-white`}
                   >
                     <span className="text-base font-semibold">
                       {faq.question}
@@ -108,8 +110,8 @@ export function FAQ() {
             <div className="flex p-6 relative">
               <JoinCornerBacket />
               <MovingDashedBorder />
-              <div className="flex justify-between gap-6">
-                <div className="flex flex-col gap-1">
+              <div className="flex justify-between max-[768px]:flex-col gap-6 w-full">
+                <div className="flex flex-col max-[768px]:w-full gap-1">
                   <p className="text-xl text-text-secondary">
                     Still have a question in mind?
                   </p>

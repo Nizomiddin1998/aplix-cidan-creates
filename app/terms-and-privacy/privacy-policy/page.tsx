@@ -1,12 +1,9 @@
-import { Header } from "@/widgets/header/Header";
-import { Footer } from "@/widgets/footer/Footer";
 import { LegalHero } from "@/widgets/legal/LegalHero";
 import { LegalContent } from "@/widgets/legal/LegalContent";
 
 export default function PrivacyPage() {
   return (
-    <main style={{ minHeight: "100vh", background: "var(--bg)" }}>
-      <Header />
+    <main>
       <div style={{ paddingTop: 56 }}>
         <LegalHero title="Privacy Policy" lastUpdated="October 28, 2026" />
         <LegalContent>
@@ -43,7 +40,6 @@ export default function PrivacyPage() {
           </p>
         </LegalContent>
       </div>
-      <Footer />
     </main>
   );
 }

@@ -59,7 +59,7 @@ const config: Config = {
         "2xs": ["0.65rem", { lineHeight: "1rem" }],
         xs: ["0.75rem", { lineHeight: "1.1rem" }],
         sm: ["0.8rem", { lineHeight: "1.3rem" }],
-        base: ["0.875rem", { lineHeight: "1.5rem" }],
+        base: ["0.875rem", { lineHeight: "1.4rem" }],
         lg: ["0.95rem", { lineHeight: "1.5rem" }],
         xl: ["1rem", { lineHeight: "1.5rem" }],
         "2xl": ["1.25rem", { lineHeight: "1.2rem" }],

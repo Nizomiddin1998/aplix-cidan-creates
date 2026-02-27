@@ -61,7 +61,7 @@ export function FeaturesTab() {
   return (
     <section className="section flex flex-col gap-20" ref={ref}>
       <div className="container-main">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* ── LEFT COLUMN ── */}
           <div className="flex flex-col gap-10">
             {/* Heading */}
@@ -105,7 +105,6 @@ export function FeaturesTab() {
                       startInterval();
                     }}
                     className="relative flex items-center gap-4 px-3 py-3 cursor-pointer transition-colors duration-200 group"
-                    style={{}}
                   >
                     {/* Background Left Border (Inactive & Base) */}
                     <div
@@ -174,7 +173,7 @@ export function FeaturesTab() {
             initial={{ opacity: 0, x: 20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="hidden md:block relative"
+            className="w-full relative"
           >
             <div className="w-full relative min-h-[300px] md:min-h-[400px] lg:min-h-[500px]">
               <AnimatePresence mode="wait">
@@ -184,12 +183,12 @@ export function FeaturesTab() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="absolute inset-0 w-full h-full flex items-center justify-center p-6 lg:p-12"
+                  className="absolute inset-0 w-full h-full flex items-center justify-center"
                 >
                   <Image
                     src={TABS.find((t) => t.id === active)?.image || Feature1}
                     alt="Feature preview"
-                    className="w-full h-auto object-contain max-h-[100%]"
+                    className="w-full  object-cover max-h-[100%]"
                     priority
                   />
                 </motion.div>

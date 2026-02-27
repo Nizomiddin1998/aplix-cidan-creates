@@ -125,22 +125,31 @@ export function ParticleSphere() {
       rotVY = 0;
     let idleFrames = 0;
 
-    const AUTO_X = 0.0006;
-    const AUTO_Y = 0.0013;
-    const INERTIA = 0.92;
+    // ── Sozlamalar (O'zingiz o'zgartirib ko'rishingiz mumkin) ───────────────
+    const AUTO_X = 0.0006; // X o'qi bo'yicha aylanish tezligi (tepa-past)
+    const AUTO_Y = 0.0013; // Y o'qi bo'yicha aylanish tezligi (o'ng-chap)
+    const INERTIA = 0.92; // Drag bo'lgandan keyingi sekinlashish inertiyasi
+
+    const SCATTER_R = 0.22; // Hover qochish kengligi (radius)
+    const SCATTER_F = 0.055; // Hover itarish kuchi
+
+    const SPLASH_R = 0.5; // Click sachrash kengligi (radius)
+    const SPLASH_F = 0.8; // Click sachrash kuchi
+
+    const RETURN_SPD = 0.045; // Zarrachalarning o'z joyiga qaytish tezligi
+    const DAMP = 0.86; // Umumiy inertsiya (sekinlashish qarshiligi)
+    // ────────────────────────────────────────────────────────────────────────
 
     // ── Hover scatter state ──────────────────────────────────────────────────
     const mouse3D = new THREE.Vector2(99999, 99999);
-    const SCATTER_R = 0.22;
-    const SCATTER_F = 0.055;
-    const RETURN_SPD = 0.045;
-    const DAMP = 0.86;
 
     // ── Helpers ──────────────────────────────────────────────────────────────
     const invMat = new THREE.Matrix4();
     const rayOriginL = new THREE.Vector3();
     const rayDirL = new THREE.Vector3();
     const localCursor = new THREE.Vector3();
+    let wantsSplash = false;
+    let dragDistance = 0;
 
     function toNDC(clientX: number, clientY: number) {
       const r = container.getBoundingClientRect();
@@ -155,6 +164,8 @@ export function ParticleSphere() {
       isDragging = true;
       prevX = e.clientX;
       prevY = e.clientY;
+      mouse3D.copy(toNDC(e.clientX, e.clientY));
+      dragDistance = 0;
       rotVX = rotVY = 0;
       container.setPointerCapture(e.pointerId);
     };
@@ -164,6 +175,7 @@ export function ParticleSphere() {
       if (!isDragging) return;
       const dx = e.clientX - prevX;
       const dy = e.clientY - prevY;
+      dragDistance += Math.abs(dx) + Math.abs(dy);
       rotVY = dx * 0.006;
       rotVX = dy * 0.006;
       mesh.rotation.y += rotVY;
@@ -177,6 +189,10 @@ export function ParticleSphere() {
 
     const onPointerUp = (e: PointerEvent) => {
       isDragging = false;
+      if (dragDistance < 5) {
+        wantsSplash = true;
+        mouse3D.copy(toNDC(e.clientX, e.clientY));
+      }
       try {
         container.releasePointerCapture(e.pointerId);
       } catch (_) {}
@@ -256,17 +272,46 @@ export function ParticleSphere() {
       for (let i = 0; i < COUNT; i++) {
         const i3 = i * 3;
 
-        // 1. Scatter force (only when cursor hits sphere surface)
-        if (hitFound) {
-          const cx = currPos[i3] - localCursor.x;
-          const cy = currPos[i3 + 1] - localCursor.y;
-          const cz = currPos[i3 + 2] - localCursor.z;
-          const dist = Math.sqrt(cx * cx + cy * cy + cz * cz);
-          if (dist < SCATTER_R && dist > 0) {
+        // 1. Scatter force (nur orqali butun sphere qalinligida - orqaga ham ta'sir qiladi)
+        if (hitFound || wantsSplash) {
+          const px = currPos[i3];
+          const py = currPos[i3 + 1];
+          const pz = currPos[i3 + 2];
+
+          // Nur originidan zarrachagacha vektor
+          const vx = px - rayOriginL.x;
+          const vy = py - rayOriginL.y;
+          const vz = pz - rayOriginL.z;
+
+          // Zarrachaning nur chizig'idagi proyeksiyasi t
+          const t = vx * rayDirL.x + vy * rayDirL.y + vz * rayDirL.z;
+
+          // Nur chizig'idagi zarrachaga eng yaqin nuqta
+          const cx = rayOriginL.x + t * rayDirL.x;
+          const cy = rayOriginL.y + t * rayDirL.y;
+          const cz = rayOriginL.z + t * rayDirL.z;
+
+          // Zarrachadan nur markaziga qarab yo'nalgan vektor (itarish shu yo'nalishda bo'ladi)
+          const dx = px - cx;
+          const dy = py - cy;
+          const dz = pz - cz;
+
+          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+          if (hitFound && dist < SCATTER_R && dist > 0) {
             const force = (SCATTER_R - dist) / SCATTER_R;
-            vel[i3] += (cx / dist) * SCATTER_F * force;
-            vel[i3 + 1] += (cy / dist) * SCATTER_F * force;
-            vel[i3 + 2] += (cz / dist) * SCATTER_F * force;
+            vel[i3] += (dx / dist) * SCATTER_F * force;
+            vel[i3 + 1] += (dy / dist) * SCATTER_F * force;
+            vel[i3 + 2] += (dz / dist) * SCATTER_F * force;
+          }
+
+          if (wantsSplash) {
+            if (dist < SPLASH_R && dist > 0) {
+              const force = Math.pow((SPLASH_R - dist) / SPLASH_R, 1.5);
+              vel[i3] += (dx / dist) * SPLASH_F * force;
+              vel[i3 + 1] += (dy / dist) * SPLASH_F * force;
+              vel[i3 + 2] += (dz / dist) * SPLASH_F * force;
+            }
           }
         }
 
@@ -284,6 +329,9 @@ export function ParticleSphere() {
         currPos[i3] += vel[i3];
         currPos[i3 + 1] += vel[i3 + 1];
         currPos[i3 + 2] += vel[i3 + 2];
+      }
+      if (wantsSplash) {
+        wantsSplash = false;
       }
       posAttr.needsUpdate = true;
 
